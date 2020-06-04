@@ -1,0 +1,35 @@
+{
+  "name": "donbidon/lib-process",
+  "type": "library",
+  "description": "PHP-process Lock library",
+  "homepage": "https://github.com/donbidon/lib-process",
+  "keywords": ["php", "process", "lock"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "donbidon",
+      "homepage": "http://donbidon.rf.gd/"
+    }
+  ],
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "php": ">=7.4"
+  },
+  "require-dev": {
+    "squizlabs/php_codesniffer": "3.*",
+    "slevomat/coding-standard": "~6.0",
+    "phpunit/phpunit": "^9"
+  },
+  "autoload": {
+    "psr-4": {
+      "donbidon\\Lib\\Process\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "donbidon\\Lib\\Process\\":  "tests",
+      "donbidon\\Tests\\Lib\\Process\\": "tests/src"
+    }
+  }
+}
