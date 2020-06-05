@@ -19,7 +19,7 @@ try {
     $lock = new Lock(
         new Storage::getLayer("Filesystem", ['path' => "path/to/lock"]),
         60 * 5, // 5 minutes
-        true
+        true,
     );
 } catch (RuntimeException $e) {
     switch ($e->getCode()) {
