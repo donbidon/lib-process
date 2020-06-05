@@ -51,7 +51,7 @@ class Filesystem implements StorageLayerInterface
     public function delete(): void
     {
         if (!@\unlink($this->path)) {
-            throw new RuntimeException("Cannot delete data to '{$this->path}'");
+            throw new RuntimeException("Cannot delete data from '{$this->path}'");
         }
     }
 
@@ -107,7 +107,7 @@ class Filesystem implements StorageLayerInterface
         if (null === $time) {
             $time = \time();
         }
-        if (!@\touch($this->path, $time)) {
+        if (!$this->exists() || !@\touch($this->path, $time)) {
             throw new RuntimeException("Cannot update modification time of record at '{$this->path}'");
         }
         \clearstatcache(false, $this->path);

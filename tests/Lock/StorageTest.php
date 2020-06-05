@@ -28,7 +28,7 @@ class StorageTest extends TestCase
     public function testExceptionWhenInvalidLayer(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessageMatches("/^Invalid layer /");
+        $this->expectExceptionMessageMatches("/^Invalid layer/");
         Storage::getLayer("../Layer", []);
     }
 

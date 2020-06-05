@@ -10,8 +10,8 @@ declare(strict_types=1);
 
 namespace donbidon\Lib\Process\Lock\StorageLayer;
 
+use donbidon\Lib\Process\LockTestCase;
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
 /**
@@ -19,18 +19,8 @@ use RuntimeException;
  *
  * @coversDefaultClass \donbidon\Lib\Process\Lock\StorageLayer\Filesystem
  */
-class FilesystemTest extends TestCase
+class FilesystemTest extends LockTestCase
 {
-    /**
-     * Temporary lock-file path
-     */
-    protected string $path;
-
-    /**
-     * Temporary directory path
-     */
-    protected static string $tmp = "./build/tmp";
-
     /**
      * Tests exception when required 'path' option missing.
      *
@@ -75,7 +65,7 @@ class FilesystemTest extends TestCase
     public function testExceptionWhenDeletingInvalidRecord(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage("Cannot delete data to '{$this->path}'");
+        $this->expectExceptionMessage("Cannot delete data from '{$this->path}'");
         $storage = new Filesystem(['path' => $this->path]);
         $storage->delete();
     }
@@ -164,47 +154,5 @@ class FilesystemTest extends TestCase
         self::assertEquals($time, $storage->getModificationTime());
         $storage->delete();
         self::assertFalse($storage->exists());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function setUpBeforeClass(): void
-    {
-        parent::setUpBeforeClass();
-
-        \mkdir(self::$tmp, 0666);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public static function tearDownAfterClass(): void
-    {
-        \rmdir(self::$tmp);
-
-        parent::tearDownAfterClass();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->path = \sprintf("%s/lock", self::$tmp);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function tearDown(): void
-    {
-        if (\file_exists($this->path)) {
-            \unlink($this->path);
-        }
-
-        parent::tearDown();
     }
 }

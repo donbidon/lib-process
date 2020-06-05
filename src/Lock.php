@@ -10,68 +10,70 @@ declare(strict_types=1);
 
 namespace donbidon\Lib\Process;
 
+use donbidon\Lib\Process\Lock\StorageLayerInterface;
 use RuntimeException;
-use Throwable;
 
 /**
  * Process lock.
- *
- * @todo Cover by tests.
  */
 class Lock
 {
-    public const CANNOT_CREATE_LOCK = 1;
-    public const CANNOT_DELETE_LOCK = 2;
-    public const CANNOT_DESTROY_PREVIOUS_LOCK = 3;
-    public const CANNOT_UPDATE_LOCK = 4;
-    public const LOCK_EXISTS = 5;
-    public const LOCK_DESTROYED = 6;
-    public const LOCK_CONTAINS_WRONG_PROCESS_ID = 7;
-    public const PREVIOUS_LOCK_IS_VALID = 8;
+    public const CANNOT_CREATE = 1;
+    public const CANNOT_DELETE = 2;
+    public const CANNOT_DESTROY_PREVIOUS = 3;
+    public const CANNOT_UPDATE = 4;
+    public const DESTROYED = 5;
+    public const EXISTING_IS_VALID = 6;
+    public const EXISTS = 7;
+    public const WRONG_PROCESS_ID = 8;
 
     protected StorageLayerInterface $storage;
     protected string $processId;
 
     /**
+     * @param StorageLayerInterface $storage Storage layer
+     * @param int $timeToLive TTL
+     * @param bool|null $destroyPreviousLock Destroy previous lock
+     * @param string|null $processId Process Id
      * @throws RuntimeException
      */
     public function __construct(
         StorageLayerInterface $storage,
         int $timeToLive,
         ?bool $destroyPreviousLock = false,
-        ?string $processId = ''
+        ?string $processId = null
     ) {
         $this->storage = $storage;
-        $this->processId = '' === $processId ? $this->generateProcessId() : $processId;
+        $this->processId = $processId ?? $this->generateProcessId();
         if ($this->storage->exists()) {
             if (\time() - $this->storage->getModificationTime() < $timeToLive) {
                 throw new RuntimeException(
                     "Previous lock is still valid",
-                    self::PREVIOUS_LOCK_IS_VALID,
+                    self::EXISTING_IS_VALID,
                 );
             }
             if ($destroyPreviousLock) {
                 try {
                     $this->storage->delete();
-                } catch (Throwable $e) {
+                } catch (RuntimeException $e) {
                     throw new RuntimeException(
                         "Cannot destroy previous lock: {$e->getMessage()}",
-                        self::CANNOT_DESTROY_PREVIOUS_LOCK,
+                        self::CANNOT_DESTROY_PREVIOUS,
                     );
                 }
             } else {
                 throw new RuntimeException(
                     "Lock already exists",
-                    self::LOCK_EXISTS,
+                    self::EXISTS,
                 );
             }
         }
         try {
             $this->storage->set($this->processId);
-        } catch (Throwable $e) {
+        } catch (RuntimeException $e) {
             throw new RuntimeException(
                 "Cannot create lock: {$e->getMessage()}",
-                self::CANNOT_CREATE_LOCK,
+                self::CANNOT_CREATE,
             );
         }
     }
@@ -84,10 +86,10 @@ class Lock
         $this->validate();
         try {
             $this->storage->delete();
-        } catch (Throwable $e) {
+        } catch (RuntimeException $e) {
             throw new RuntimeException(
                 "Cannot delete lock: {$e->getMessage()}",
-                self::CANNOT_DELETE_LOCK,
+                self::CANNOT_DELETE,
             );
         }
     }
@@ -100,13 +102,13 @@ class Lock
     public function validate(): void
     {
         if (!$this->storage->exists()) {
-            throw new RuntimeException("Lock destroyed", self::LOCK_DESTROYED);
+            throw new RuntimeException("Lock destroyed", self::DESTROYED);
         }
         $processId = $this->storage->get();
         if ($processId !== $this->processId) {
             throw new RuntimeException(
-                "Lock contains wrong process Id '{$processId}' instead of '$this->processId'",
-                self::LOCK_CONTAINS_WRONG_PROCESS_ID,
+                "Lock contains wrong process Id '{$processId}' instead of '{$this->processId}'",
+                self::WRONG_PROCESS_ID,
             );
         }
     }
@@ -121,10 +123,10 @@ class Lock
         $this->validate();
         try {
             $this->storage->updateModificationTime();
-        } catch (Throwable $e) {
+        } catch (RuntimeException $e) {
             throw new RuntimeException(
                 "Cannot update lock: {$e->getMessage()}",
-                self::CANNOT_UPDATE_LOCK,
+                self::CANNOT_UPDATE,
             );
         }
     }
