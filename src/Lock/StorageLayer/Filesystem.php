@@ -20,12 +20,10 @@ use RuntimeException;
 class Filesystem implements StorageLayerInterface
 {
     protected string $path;
-    protected int $mode = 0666;
 
     /**
      * @param array $options
      *   'path' key contains path,
-     *   'mode' key contains mode for \chmod() (optional, default is 0666)
      * @throws InvalidArgumentException
      */
     public function __construct(array $options)
@@ -37,12 +35,6 @@ class Filesystem implements StorageLayerInterface
             throw new InvalidArgumentException("\$options['path'] must be a string");
         }
         $this->path = $options['path'];
-        if (isset($options['mode'])) {
-            if (!\is_int($options['mode'])) {
-                throw new InvalidArgumentException("\$options['mode'] must be an integer");
-            }
-            $this->mode = $options['mode'];
-        }
     }
 
     /**
@@ -96,7 +88,6 @@ class Filesystem implements StorageLayerInterface
         if (!@\file_put_contents($this->path, (string)$data)) {
             throw new RuntimeException("Cannot set record data to '{$this->path}'");
         }
-        @\chmod($this->path, $this->mode);
     }
 
     /**

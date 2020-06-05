@@ -46,18 +46,6 @@ class FilesystemTest extends LockTestCase
     }
 
     /**
-     * Tests exception when 'mode' option isn't an integer.
-     *
-     * @covers ::__construct
-     */
-    public function testExceptionWhenInvalodModeOption(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("\$options['mode'] must be an integer");
-        new Filesystem(['path' => "path", 'mode' => ""]);
-    }
-
-    /**
      * Tests exception when 'path' deleting invalid record.
      *
      * @covers ::delete
@@ -137,10 +125,7 @@ class FilesystemTest extends LockTestCase
      */
     public function testCommonFunctionality(): void
     {
-        $storage = new Filesystem([
-            'path' => $this->path,
-            'mode' => 0666,
-        ]);
+        $storage = new Filesystem(['path' => $this->path]);
         self::assertFalse($storage->exists());
         $time = \time();
         $storage->set('test');

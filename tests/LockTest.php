@@ -67,9 +67,6 @@ class LockTest extends LockTestCase
         $time = $this->storage->getModificationTime();
         $time -= 60 * 10; // 10 minutes ago
         $this->storage->updateModificationTime($time);
-        // Doesn't work in PHP >= 7.3 so we use mock storage object
-        // $fh = \fopen($this->path, 'r');
-        // \flock($fh, \LOCK_EX);
         $stub = $this->getMockBuilder(Filesystem::class)
             ->setMethodsExcept(\array_diff(\get_class_methods(Filesystem::class), ['delete']))
             ->setConstructorArgs([['path' => $this->path]])
@@ -91,9 +88,12 @@ class LockTest extends LockTestCase
         $time = $this->storage->getModificationTime();
         $time -= 60 * 10; // 10 minutes ago
         $this->storage->updateModificationTime($time);
-        $fh = \fopen($this->path, 'rw');
-        \flock($fh, \LOCK_SH);
-        new Lock($this->storage, 1, true);
+        $stub = $this->getMockBuilder(Filesystem::class)
+            ->setMethodsExcept(\array_diff(\get_class_methods(Filesystem::class), ['set']))
+            ->setConstructorArgs([['path' => $this->path]])
+            ->getMock();
+        $stub->method('set')->will($this->throwException(new RuntimeException()));
+        new Lock($stub, 1, true);
     }
 
     /**
