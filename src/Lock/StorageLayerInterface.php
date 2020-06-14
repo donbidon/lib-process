@@ -35,5 +35,8 @@ interface StorageLayerInterface
      */
     public function set($data): void;
 
+    /**
+     * @param int|null $time \time() by default
+     */
     public function updateModificationTime(?int $time = null): void;
 }

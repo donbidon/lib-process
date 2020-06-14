@@ -91,6 +91,8 @@ class Filesystem implements StorageLayerInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @throws RuntimeException
      */
     public function updateModificationTime(?int $time = null): void
