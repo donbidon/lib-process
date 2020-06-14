@@ -10,6 +10,7 @@ script:
   - vendor/bin/phpunit -c ./build/config/phpunit.xml
 
 after_success:
+  - cd build/output
   - bash <(curl -s https://codecov.io/bash)
 
 notifications:
