@@ -118,6 +118,7 @@ class Lock
     /**
      * Update lock modification time.
      *
+     * @param bool $setTimeLimit Flag specifying to call \set_time_limit()
      * @throws RuntimeException
      */
     public function update(bool $setTimeLimit = false): void
