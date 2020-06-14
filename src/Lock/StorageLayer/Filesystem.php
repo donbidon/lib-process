@@ -23,7 +23,7 @@ class Filesystem implements StorageLayerInterface
 
     /**
      * @param array $options
-     *   'path' key contains path,
+     *   'path' key contains path.
      * @throws InvalidArgumentException
      */
     public function __construct(array $options)
