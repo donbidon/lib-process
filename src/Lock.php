@@ -28,11 +28,12 @@ class Lock
     public const WRONG_PROCESS_ID = 8;
 
     protected StorageLayerInterface $storage;
+    protected int $timeToLive;
     protected string $processId;
 
     /**
      * @param StorageLayerInterface $storage Storage layer
-     * @param int $timeToLive TTL
+     * @param int $timeToLive TTL in seconds
      * @param bool|null $destroyPreviousLock Destroy previous lock
      * @param string|null $processId Process Id
      * @throws RuntimeException
@@ -76,6 +77,7 @@ class Lock
                 self::CANNOT_CREATE,
             );
         }
+        $this->timeToLive = $timeToLive;
     }
 
     /**
@@ -118,7 +120,7 @@ class Lock
      *
      * @throws RuntimeException
      */
-    public function update(): void
+    public function update(bool $setTimeLimit = false): void
     {
         $this->validate();
         try {
@@ -129,6 +131,11 @@ class Lock
                 self::CANNOT_UPDATE,
             );
         }
+        // @codeCoverageIgnoreStart
+        if ($setTimeLimit) {
+            \set_time_limit($this->timeToLive);
+        }
+        // @codeCoverageIgnoreEnd
     }
 
     // phpcs: disable Squiz.Commenting.FunctionComment.Missing
