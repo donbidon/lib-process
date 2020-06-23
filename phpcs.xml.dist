@@ -2,7 +2,7 @@
 <ruleset
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         name="PSR2+-"
-        xsi:noNamespaceSchemaLocation="../../vendor/squizlabs/php_codesniffer/phpcs.xsd"
+        xsi:noNamespaceSchemaLocation="vendor/squizlabs/php_codesniffer/phpcs.xsd"
 >
     <description>The PSR-2+- coding standard.</description>
 
@@ -11,8 +11,8 @@
 
     <arg value="sp" />
 
-    <file>../../src</file>
-    <file>../../tests</file>
+    <file>src</file>
+    <file>tests</file>
 
     <rule ref="PSR2">
         <exclude name="PSR2.ControlStructures.ControlStructureSpacing.SpacingAfterOpenBrace" />

@@ -6,8 +6,8 @@ install:
   - travis_retry composer install --no-interaction --prefer-dist --optimize-autoloader
 
 script:
-  - vendor/bin/phpcs --standard=./build/config/phpcs.ruleset.xml
-  - vendor/bin/phpunit -c ./build/config/phpunit.xml
+  - vendor/bin/phpcs
+  - vendor/bin/phpunit
 
 after_success:
   - cd build/output
