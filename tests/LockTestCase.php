@@ -34,7 +34,7 @@ class LockTestCase extends TestCase
     {
         parent::setUpBeforeClass();
 
-        \mkdir(self::$tmp);
+        \mkdir(self::$tmp, 0777, true);
     }
 
     /**
