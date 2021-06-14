@@ -6,8 +6,6 @@
 [![Code Coverage](https://codecov.io/gh/donbidon/lib-process/branch/master/graph/badge.svg)](https://codecov.io/gh/donbidon/lib-process)
 [![GitHub issues](https://img.shields.io/github/issues-raw/donbidon/lib-process.svg)](https://github.com/donbidon/lib-process/issues)
 
-[![Donate to liberapay](http://img.shields.io/liberapay/receives/don.bidon.svg?logo=liberapay)](https://liberapay.com/don.bidon/donate)
-
 ## Installing
 Run `composer require donbidon/lib-process`.
 
@@ -21,7 +19,8 @@ try {
     $lock = new Lock(
         new Storage::getLayer("Filesystem", ['path' => "path/to/lock"]),
         60 * 5, // 5 minutes
-        true,
+        true, // Destroy previous lock, false by default
+        // "...", // custom lock id
     );
 } catch (RuntimeException $e) {
     switch ($e->getCode()) {
@@ -39,7 +38,7 @@ while (true) {
     try {
         $lock->update(true); // true to call \set_time_limit(), false by default
     } catch (RuntimeException $e) {
-        // ...
+        // Lock was destroyed by another instance of the daemon
     }
 }
 
