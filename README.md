@@ -41,8 +41,6 @@ while (true) {
         // Lock was destroyed by another instance of the daemon
     }
 }
-
-unset($lock);
 ```
 
 ## Donation
